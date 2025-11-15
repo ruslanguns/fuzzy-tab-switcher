@@ -86,6 +86,7 @@ function renderResults() {
 
   if (filteredResults.length === 0) {
     resultsContainer.innerHTML = '<div class="empty-state">No tabs found</div>';
+    adjustPopupHeight(1);
     return;
   }
 
@@ -118,6 +119,23 @@ function renderResults() {
       renderResults();
     });
   });
+
+  // Adjust popup height based on results
+  adjustPopupHeight(filteredResults.length);
+}
+
+// Adjust popup height dynamically
+function adjustPopupHeight(resultCount) {
+  const searchHeight = 49; // Input height + border
+  const itemHeight = 61; // Approximate height per item
+  const maxItems = 8; // Maximum items to show before scrolling
+  const emptyStateHeight = 120; // Height for empty state
+
+  const visibleItems = Math.min(resultCount, maxItems);
+  const contentHeight = resultCount === 0 ? emptyStateHeight : (visibleItems * itemHeight);
+  const totalHeight = searchHeight + contentHeight;
+
+  document.body.style.height = `${totalHeight}px`;
 }
 
 // Highlight matched characters
