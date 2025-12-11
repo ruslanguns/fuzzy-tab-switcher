@@ -40,7 +40,7 @@ function fuzzyMatch(pattern, text) {
   return { score, matches };
 }
 
-function fuzzySearch(tabs, query) {
+export function fuzzySearch(tabs, query) {
   if (!query) return tabs;
 
   const results = tabs
