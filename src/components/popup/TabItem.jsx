@@ -5,15 +5,10 @@ export const TabItem = forwardRef(({ result, isSelected, onClick, onMouseEnter }
   const { tab, match, matchedIn } = result;
   const audioIndicator = tab.audible ? ' 🔊' : '';
 
-  const handleClick = (e) => {
-    console.log('TabItem div clicked', tab.title);
-    onClick(e);
-  };
-
   return (
     <div
       ref={ref}
-      onClick={handleClick}
+      onClick={onClick}
       onMouseEnter={onMouseEnter}
       class={`
         flex items-center gap-3 px-4 py-3 border-b border-[#2d2d2d] cursor-pointer transition-colors

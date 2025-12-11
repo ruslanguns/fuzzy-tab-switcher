@@ -26,10 +26,7 @@ export function TabList({ results, selectedIndex, onSelect, onHover }) {
           ref={index === selectedIndex ? selectedRef : null}
           result={result}
           isSelected={index === selectedIndex}
-          onClick={() => {
-            console.log('TabItem onClick, index:', index);
-            onSelect(index);
-          }}
+          onClick={() => onSelect(index)}
           onMouseEnter={() => onHover(index)}
         />
       ))}

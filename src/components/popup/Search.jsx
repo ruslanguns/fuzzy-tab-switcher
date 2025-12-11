@@ -8,6 +8,7 @@ export const Search = forwardRef(({ value, onInput, onKeyDown }, ref) => {
       value={value}
       onInput={onInput}
       onKeyDown={onKeyDown}
+      autoFocus
       placeholder="Search tabs..."
       autoComplete="off"
       spellCheck="false"
