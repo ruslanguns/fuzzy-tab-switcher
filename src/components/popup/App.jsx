@@ -8,6 +8,7 @@ export function App() {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [tabAccessHistory, setTabAccessHistory] = useState({});
+  const [currentWindowId, setCurrentWindowId] = useState(null);
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -15,6 +16,9 @@ export function App() {
       const data = await chrome.storage.local.get('tabAccessHistory');
       const history = data.tabAccessHistory || {};
       setTabAccessHistory(history);
+
+      const currentWindow = await chrome.windows.getCurrent();
+      setCurrentWindowId(currentWindow.id);
 
       const tabs = await chrome.tabs.query({});
       setAllTabs(tabs);
@@ -67,17 +71,26 @@ export function App() {
   }
 
   async function switchToTab(index) {
-    if (filteredResults.length === 0 || !filteredResults[index]) return;
+    console.log('switchToTab called with index:', index);
+
+    if (filteredResults.length === 0 || !filteredResults[index]) {
+      console.log('No results or invalid index');
+      return;
+    }
 
     const { tab } = filteredResults[index];
+    console.log('Switching to tab:', tab.title, 'windowId:', tab.windowId, 'currentWindowId:', currentWindowId);
 
     try {
-      if (tab.windowId !== chrome.windows.WINDOW_ID_CURRENT) {
+      if (currentWindowId && tab.windowId !== currentWindowId) {
+        console.log('Switching window to:', tab.windowId);
         await chrome.windows.update(tab.windowId, { focused: true });
       }
 
+      console.log('Activating tab:', tab.id);
       await chrome.tabs.update(tab.id, { active: true });
       await recordTabAccess(tab.id);
+      console.log('Tab activated successfully, closing popup');
       window.close();
     } catch (error) {
       console.error('Failed to switch tab:', error);
