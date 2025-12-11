@@ -1,105 +1,149 @@
-let allTabs = [];
-let filteredResults = [];
-let selectedIndex = 0;
+const state = {
+  allTabs: [],
+  filteredResults: [],
+  selectedIndex: 0,
+  tabAccessHistory: {},
+};
 
-const searchInput = document.getElementById('search');
-const resultsContainer = document.getElementById('results');
+const elements = {
+  search: document.getElementById('search'),
+  results: document.getElementById('results'),
+};
 
-// Initialize
-(async function init() {
-  // Get all tabs from current window
-  const window = await chrome.windows.getCurrent();
-  allTabs = await chrome.tabs.query({ windowId: window.id });
+const CONFIG = {
+  MAX_VISIBLE_ITEMS: 8,
+  SEARCH_HEIGHT: 49,
+  ITEM_HEIGHT: 61,
+  EMPTY_STATE_HEIGHT: 120,
+};
 
-  // Focus search input
-  searchInput.focus();
-
-  // Initial render
+async function init() {
+  await loadTabAccessHistory();
+  await loadAllTabs();
+  elements.search.focus();
   renderResults();
-})();
+}
 
-// Search input handler
-searchInput.addEventListener('input', (e) => {
-  selectedIndex = 0;
+async function loadTabAccessHistory() {
+  const data = await chrome.storage.local.get('tabAccessHistory');
+  state.tabAccessHistory = data.tabAccessHistory || {};
+}
+
+async function saveTabAccessHistory() {
+  await chrome.storage.local.set({ tabAccessHistory: state.tabAccessHistory });
+}
+
+async function loadAllTabs() {
+  state.allTabs = await chrome.tabs.query({});
+  cleanupTabAccessHistory();
+}
+
+function cleanupTabAccessHistory() {
+  const validTabIds = new Set(state.allTabs.map(tab => tab.id));
+  const cleaned = {};
+
+  for (const [tabId, timestamp] of Object.entries(state.tabAccessHistory)) {
+    if (validTabIds.has(parseInt(tabId))) {
+      cleaned[tabId] = timestamp;
+    }
+  }
+
+  state.tabAccessHistory = cleaned;
+}
+
+async function recordTabAccess(tabId) {
+  state.tabAccessHistory[tabId] = Date.now();
+  await saveTabAccessHistory();
+}
+
+elements.search.addEventListener('input', () => {
+  state.selectedIndex = 0;
   renderResults();
 });
 
-// Keyboard navigation
-searchInput.addEventListener('keydown', async (e) => {
-  switch (e.key) {
-    case 'ArrowDown':
-      e.preventDefault();
-      selectedIndex = Math.min(selectedIndex + 1, filteredResults.length - 1);
-      renderResults();
-      scrollToSelected();
-      break;
+elements.search.addEventListener('keydown', async (e) => {
+  const handlers = {
+    ArrowDown: () => navigateDown(),
+    ArrowUp: () => navigateUp(),
+    Tab: () => (e.shiftKey ? navigateUp() : navigateDown()),
+    Enter: () => switchToSelectedTab(),
+    Escape: () => window.close(),
+    Delete: () => closeSelectedTab(),
+    Backspace: () => (e.metaKey || e.ctrlKey) && closeSelectedTab(),
+  };
 
-    case 'ArrowUp':
-      e.preventDefault();
-      selectedIndex = Math.max(selectedIndex - 1, 0);
-      renderResults();
-      scrollToSelected();
-      break;
-
-    case 'Tab':
-      e.preventDefault();
-      if (e.shiftKey) {
-        // Shift+Tab: navigate up
-        selectedIndex = Math.max(selectedIndex - 1, 0);
-      } else {
-        // Tab: navigate down
-        selectedIndex = Math.min(selectedIndex + 1, filteredResults.length - 1);
-      }
-      renderResults();
-      scrollToSelected();
-      break;
-
-    case 'Enter':
-      e.preventDefault();
-      await switchToSelectedTab();
-      break;
-
-    case 'Escape':
-      window.close();
-      break;
-
-    case 'Delete':
-    case 'Backspace':
-      // Only close tab if input is empty or modifier key is pressed
-      if (e.key === 'Delete' || (e.key === 'Backspace' && (e.metaKey || e.ctrlKey))) {
-        e.preventDefault();
-        await closeSelectedTab();
-      }
-      break;
+  const handler = handlers[e.key];
+  if (handler) {
+    e.preventDefault();
+    await handler();
   }
 });
 
-// Render results
+function navigateDown() {
+  state.selectedIndex = Math.min(
+    state.selectedIndex + 1,
+    state.filteredResults.length - 1
+  );
+  renderResults();
+  scrollToSelected();
+}
+
+function navigateUp() {
+  state.selectedIndex = Math.max(state.selectedIndex - 1, 0);
+  renderResults();
+  scrollToSelected();
+}
+
 function renderResults() {
-  const query = searchInput.value.trim();
+  const query = elements.search.value.trim();
 
   if (!query) {
-    filteredResults = allTabs.map(tab => ({ tab, match: { score: 0, matches: [] }, matchedIn: 'title' }));
+    state.filteredResults = sortByMRU(state.allTabs);
   } else {
-    filteredResults = fuzzySearch(allTabs, query);
+    state.filteredResults = fuzzySearch(state.allTabs, query);
   }
 
-  if (filteredResults.length === 0) {
-    resultsContainer.innerHTML = '<div class="empty-state">No tabs found</div>';
-    adjustPopupHeight(1);
+  if (state.filteredResults.length === 0) {
+    renderEmptyState();
     return;
   }
 
-  resultsContainer.innerHTML = filteredResults
+  renderTabItems();
+  adjustPopupHeight(state.filteredResults.length);
+}
+
+function sortByMRU(tabs) {
+  return tabs
+    .map(tab => ({
+      tab,
+      match: { score: 0, matches: [] },
+      matchedIn: 'title',
+      lastAccess: state.tabAccessHistory[tab.id] || 0,
+    }))
+    .sort((a, b) => {
+      if (a.tab.active) return -1;
+      if (b.tab.active) return 1;
+      return b.lastAccess - a.lastAccess;
+    });
+}
+
+function renderEmptyState(message = 'No tabs found') {
+  elements.results.innerHTML = `<div class="empty-state">${escapeHtml(message)}</div>`;
+  adjustPopupHeight(1);
+}
+
+function renderTabItems() {
+  elements.results.innerHTML = state.filteredResults
     .map((result, index) => {
       const { tab, match, matchedIn } = result;
-      const isSelected = index === selectedIndex;
+      const isSelected = index === state.selectedIndex;
+      const audioIndicator = tab.audible ? ' 🔊' : '';
 
       return `
         <div class="tab-item ${isSelected ? 'selected' : ''}" data-index="${index}">
           <img class="tab-favicon" src="${tab.favIconUrl || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>'}" alt="">
           <div class="tab-info">
-            <div class="tab-title">${highlightText(tab.title || 'Untitled', matchedIn === 'title' ? match.matches : [])}</div>
+            <div class="tab-title">${highlightText(tab.title || 'Untitled', matchedIn === 'title' ? match.matches : [])}${audioIndicator}</div>
             <div class="tab-url">${highlightText(formatUrl(tab.url), matchedIn === 'url' ? match.matches : [])}</div>
           </div>
         </div>
@@ -107,38 +151,46 @@ function renderResults() {
     })
     .join('');
 
-  // Add click handlers
+  attachTabItemListeners();
+}
+
+function attachTabItemListeners() {
   document.querySelectorAll('.tab-item').forEach(item => {
     item.addEventListener('click', async () => {
-      selectedIndex = parseInt(item.dataset.index);
+      state.selectedIndex = parseInt(item.dataset.index);
       await switchToSelectedTab();
     });
 
     item.addEventListener('mouseenter', () => {
-      selectedIndex = parseInt(item.dataset.index);
-      renderResults();
+      const newIndex = parseInt(item.dataset.index);
+      if (state.selectedIndex !== newIndex) {
+        state.selectedIndex = newIndex;
+        updateSelectedClass();
+      }
     });
   });
-
-  // Adjust popup height based on results
-  adjustPopupHeight(filteredResults.length);
 }
 
-// Adjust popup height dynamically
-function adjustPopupHeight(resultCount) {
-  const searchHeight = 49; // Input height + border
-  const itemHeight = 61; // Approximate height per item
-  const maxItems = 8; // Maximum items to show before scrolling
-  const emptyStateHeight = 120; // Height for empty state
+function updateSelectedClass() {
+  document.querySelectorAll('.tab-item').forEach((item, index) => {
+    if (index === state.selectedIndex) {
+      item.classList.add('selected');
+    } else {
+      item.classList.remove('selected');
+    }
+  });
+}
 
-  const visibleItems = Math.min(resultCount, maxItems);
-  const contentHeight = resultCount === 0 ? emptyStateHeight : (visibleItems * itemHeight);
-  const totalHeight = searchHeight + contentHeight;
+function adjustPopupHeight(resultCount) {
+  const visibleItems = Math.min(resultCount, CONFIG.MAX_VISIBLE_ITEMS);
+  const contentHeight = resultCount === 0
+    ? CONFIG.EMPTY_STATE_HEIGHT
+    : visibleItems * CONFIG.ITEM_HEIGHT;
+  const totalHeight = CONFIG.SEARCH_HEIGHT + contentHeight;
 
   document.body.style.height = `${totalHeight}px`;
 }
 
-// Highlight matched characters
 function highlightText(text, matches) {
   if (!matches || matches.length === 0) return escapeHtml(text);
 
@@ -155,7 +207,6 @@ function highlightText(text, matches) {
   return result;
 }
 
-// Format URL for display
 function formatUrl(url) {
   try {
     const urlObj = new URL(url);
@@ -165,54 +216,57 @@ function formatUrl(url) {
   }
 }
 
-// Escape HTML
 function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
 }
 
-// Switch to selected tab
 async function switchToSelectedTab() {
-  if (filteredResults.length === 0) return;
+  if (state.filteredResults.length === 0) return;
 
-  const result = filteredResults[selectedIndex];
+  const result = state.filteredResults[state.selectedIndex];
   if (!result) return;
 
   try {
-    await chrome.tabs.update(result.tab.id, { active: true });
+    const { tab } = result;
+
+    if (tab.windowId !== chrome.windows.WINDOW_ID_CURRENT) {
+      await chrome.windows.update(tab.windowId, { focused: true });
+    }
+
+    await chrome.tabs.update(tab.id, { active: true });
+    await recordTabAccess(tab.id);
     window.close();
   } catch (error) {
     console.error('Failed to switch tab:', error);
-    // Tab might have been closed, refresh list
-    allTabs = await chrome.tabs.query({ windowId: (await chrome.windows.getCurrent()).id });
+    await loadAllTabs();
     renderResults();
   }
 }
 
-// Close selected tab
 async function closeSelectedTab() {
-  if (filteredResults.length === 0) return;
+  if (state.filteredResults.length === 0) return;
 
-  const result = filteredResults[selectedIndex];
+  const result = state.filteredResults[state.selectedIndex];
   if (!result) return;
 
   try {
     await chrome.tabs.remove(result.tab.id);
 
-    // Remove from arrays
-    allTabs = allTabs.filter(tab => tab.id !== result.tab.id);
-    filteredResults.splice(selectedIndex, 1);
+    state.allTabs = state.allTabs.filter(tab => tab.id !== result.tab.id);
+    state.filteredResults.splice(state.selectedIndex, 1);
 
-    // Adjust selection
-    if (selectedIndex >= filteredResults.length) {
-      selectedIndex = Math.max(0, filteredResults.length - 1);
+    if (state.selectedIndex >= state.filteredResults.length) {
+      state.selectedIndex = Math.max(0, state.filteredResults.length - 1);
     }
+
+    delete state.tabAccessHistory[result.tab.id];
+    await saveTabAccessHistory();
 
     renderResults();
 
-    // Close popup if no tabs left
-    if (allTabs.length === 0) {
+    if (state.allTabs.length === 0) {
       window.close();
     }
   } catch (error) {
@@ -220,10 +274,11 @@ async function closeSelectedTab() {
   }
 }
 
-// Scroll to selected item
 function scrollToSelected() {
-  const selectedItem = resultsContainer.querySelector('.tab-item.selected');
+  const selectedItem = elements.results.querySelector('.tab-item.selected');
   if (selectedItem) {
     selectedItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 }
+
+init();

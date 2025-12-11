@@ -1,7 +1,3 @@
-/**
- * Optimized fuzzy search algorithm
- * Returns match score and highlighted positions
- */
 function fuzzyMatch(pattern, text) {
   if (!pattern) return { score: 0, matches: [] };
 
@@ -29,27 +25,21 @@ function fuzzyMatch(pattern, text) {
     textIdx++;
   }
 
-  // All pattern characters must be found
   if (patternIdx !== pattern.length) {
     return null;
   }
 
-  // Bonus for matches at word boundaries
   matches.forEach(idx => {
     if (idx === 0 || text[idx - 1] === ' ' || text[idx - 1] === '-' || text[idx - 1] === '/') {
       score += 2;
     }
   });
 
-  // Penalty for length difference
   score -= (text.length - pattern.length) * 0.1;
 
   return { score, matches };
 }
 
-/**
- * Search tabs with fuzzy matching
- */
 function fuzzySearch(tabs, query) {
   if (!query) return tabs;
 
@@ -58,11 +48,9 @@ function fuzzySearch(tabs, query) {
       const titleMatch = fuzzyMatch(query, tab.title || '');
       const urlMatch = fuzzyMatch(query, tab.url || '');
 
-      // Prioritize URL over title
       let match, matchedIn;
 
       if (urlMatch) {
-        // Give URL matches a significant boost
         match = { ...urlMatch, score: urlMatch.score * 1.5 };
         matchedIn = 'url';
       } else if (titleMatch) {
@@ -72,7 +60,6 @@ function fuzzySearch(tabs, query) {
         return null;
       }
 
-      // If both match, still use URL with boosted score
       if (urlMatch && titleMatch) {
         const boostedUrlScore = urlMatch.score * 1.5;
         if (boostedUrlScore < titleMatch.score) {

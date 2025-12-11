@@ -2,46 +2,96 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Busca y cambia entre pestañas abiertas con búsqueda fuzzy.
+A fast and powerful Chrome/Brave extension for searching and switching between open tabs using fuzzy search.
 
-## Características
+## Features
 
-- Búsqueda fuzzy en título y URL
-- Navegación completa por teclado
-- Cierre rápido de pestañas
-- Sin dependencias
-- Manifest V3
+- **Fuzzy Search** - Search tabs by title and URL with intelligent matching
+- **Full Keyboard Navigation** - Navigate entirely without a mouse
+- **Cross-Window Search** - Search tabs across all browser windows
+- **MRU Sorting** - Most Recently Used tabs appear first when no search query
+- **Quick Tab Closing** - Close tabs directly from the search interface
+- **Audio Indicator** - Visual indicator for tabs playing audio (🔊)
+- **Zero Dependencies** - Pure vanilla JavaScript
+- **Manifest V3** - Latest Chrome extension standard
+- **Persistent History** - Remembers your most used tabs
 
-## Instalación
+## Installation
 
-1. Abre `chrome://extensions/` (o `brave://extensions/`)
-2. Activa **Modo desarrollador** (arriba a la derecha)
-3. Clic en **Cargar extensión sin empaquetar**
-4. Selecciona esta carpeta
+1. Open `chrome://extensions/` (or `brave://extensions/`)
+2. Enable **Developer mode** (top right)
+3. Click **Load unpacked**
+4. Select this folder
 
-## Uso
+## Usage
 
-- **Cmd+Shift+K** (Mac) / **Ctrl+Shift+K** (Windows/Linux) - Abre el buscador
-- **↑/↓** - Navega por los resultados
-- **Enter** - Cambia a la pestaña
-- **Escape** - Cierra el buscador
-- **Delete** - Cierra la pestaña seleccionada
-- **Personalizar atajo:** `chrome://extensions/shortcuts`
+### Keyboard Shortcuts
+- **Cmd+Shift+K** (Mac) / **Ctrl+Shift+K** (Windows/Linux) - Open tab switcher
+- **↑/↓** or **Tab/Shift+Tab** - Navigate through results
+- **Enter** - Switch to selected tab
+- **Escape** - Close switcher
+- **Delete** or **Cmd+Backspace** - Close selected tab
+- **Customize shortcut:** `chrome://extensions/shortcuts`
 
-### Ejemplos de búsqueda
-
+### Search Examples
 - `gh is` → GitHub Issues
 - `tw` → Twitter
 - `gm` → Gmail
+- `localhost:3000` → Local development servers
 
-## Licencia
+## How It Works
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+### Search Across All Windows
+Unlike most tab switchers, this extension searches tabs in **all open windows**, not just the current one. When you switch to a tab in another window, that window automatically comes to focus.
 
-## Autor
+### MRU (Most Recently Used)
+When you open the switcher without typing a search query, tabs are sorted by:
+1. Active tab first
+2. Recently accessed tabs (based on your usage history)
+3. Other tabs
+
+This makes it extremely fast to switch between your most frequently used tabs.
+
+### Intelligent Fuzzy Matching
+The fuzzy search algorithm:
+- Matches characters in order, but not necessarily consecutively
+- Gives bonus points to matches at word boundaries
+- Prioritizes URL matches over title matches (1.5x boost)
+- Highlights matched characters
+
+## Architecture
+
+```
+├── manifest.json       # Extension configuration
+├── popup.html         # Search interface
+├── popup.css          # Styling
+├── popup.js           # Main application logic
+├── fuzzy.js           # Fuzzy search algorithm
+└── background.js      # Service worker
+```
+
+### Key Technologies
+- Chrome Extensions API (Manifest V3)
+- Chrome Storage API (for MRU history)
+- Vanilla JavaScript (no frameworks)
+- Modern ES6+ syntax
+
+## Privacy
+
+All data stays local:
+- Tab access history is stored locally using `chrome.storage.local`
+- No data is sent to any server
+- No analytics or tracking
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
 
 **Ruslan Gonzalez**
 - Email: ruslanguns@gmail.com
+- GitHub: [@ruslanguns](https://github.com/ruslanguns)
 
 ---
 

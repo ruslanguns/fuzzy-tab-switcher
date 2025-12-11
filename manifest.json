@@ -4,7 +4,7 @@
   "description": "Fast fuzzy search across all open tabs with Cmd+Shift+K",
   "version": "1.0.0",
   "author": "Ruslan Gonzalez <ruslanguns@gmail.com>",
-  "permissions": ["tabs"],
+  "permissions": ["tabs", "storage"],
   "background": {
     "service_worker": "background.js"
   },

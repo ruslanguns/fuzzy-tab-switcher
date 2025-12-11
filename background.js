@@ -1,2 +1,3 @@
-// Background service worker for Fuzzy Tab Switcher
-// The popup is triggered automatically by _execute_action command
+chrome.runtime.onInstalled.addListener(() => {
+  console.log('Fuzzy Tab Switcher installed');
+});
