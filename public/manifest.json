@@ -25,7 +25,8 @@
       "suggested_key": {
         "default": "Ctrl+Shift+K",
         "mac": "Command+Shift+K"
-      }
+      },
+      "description": "Open the Fuzzy Tab Switcher popup"
     },
     "quick-switch": {
       "suggested_key": {
