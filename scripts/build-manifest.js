@@ -9,7 +9,7 @@ const PLATFORM_PREFIX = `__${TARGET}__`;
 console.log(`Building manifest for target: ${TARGET}`);
 
 const srcPath = path.resolve(__dirname, '../src/manifest.json');
-const distPath = path.resolve(__dirname, '../dist/manifest.json');
+const distPath = path.resolve(__dirname, `../dist/${TARGET}/manifest.json`);
 
 fs.mkdirSync(path.dirname(distPath), { recursive: true });
 

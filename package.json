@@ -8,9 +8,9 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:chrome",
-    "build:chrome": "vite build && node scripts/build-manifest.js chrome",
-    "build:firefox": "vite build && node scripts/build-manifest.js firefox",
-    "build:safari": "vite build && node scripts/build-manifest.js safari",
+    "build:chrome": "TARGET=chrome vite build && node scripts/build-manifest.js chrome",
+    "build:firefox": "TARGET=firefox vite build && node scripts/build-manifest.js firefox",
+    "build:safari": "TARGET=safari vite build && node scripts/build-manifest.js safari",
     "preview": "vite preview"
   },
   "dependencies": {
