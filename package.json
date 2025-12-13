@@ -7,7 +7,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:chrome",
+    "build:chrome": "vite build && node scripts/build-manifest.js chrome",
+    "build:firefox": "vite build && node scripts/build-manifest.js firefox",
+    "build:safari": "vite build && node scripts/build-manifest.js safari",
     "preview": "vite preview"
   },
   "dependencies": {
