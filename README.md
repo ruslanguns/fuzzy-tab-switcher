@@ -1,6 +1,6 @@
 # Fuzzy Tab Switcher
 
-A high-performance tab switcher focused on speed and keyboard navigation. Replaces the default browser tab cycling with a fuzzy search interface that searches across all open windows.
+A high-performance, **Open Source** tab switcher focused on speed and keyboard navigation. Replaces the default browser tab cycling with a fuzzy search interface that searches across all open windows.
 
 ## Core Logic & Features
 

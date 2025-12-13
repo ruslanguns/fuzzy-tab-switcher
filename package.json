@@ -11,7 +11,11 @@
     "build:chrome": "TARGET=chrome vite build && node scripts/build-manifest.js chrome",
     "build:firefox": "TARGET=firefox vite build && node scripts/build-manifest.js firefox",
     "build:safari": "TARGET=safari vite build && node scripts/build-manifest.js safari",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "package:chrome": "npm run build:chrome && node scripts/package.js chrome",
+    "package:firefox": "npm run build:firefox && node scripts/package.js firefox",
+    "package:safari": "npm run build:safari && node scripts/package.js safari",
+    "release": "npm run package:chrome && npm run package:firefox && npm run package:safari"
   },
   "dependencies": {
     "@preact/signals": "^2.5.1",
