@@ -123,23 +123,19 @@ export function CommandHelp({ theme, onToggleTheme }) {
         {commands.map((cmd, index) => (
           <div
             key={cmd.label}
-            class={`group relative flex items-center gap-1.5 ${cmd.onClick ? "cursor-pointer transition-colors hover:text-foreground" : "cursor-help"}`}
+            class={`flex items-center gap-1.5 ${cmd.onClick ? "cursor-pointer transition-colors hover:text-foreground" : "cursor-default"}`}
             onClick={cmd.onClick}
+            title={cmd.detail}
           >
             {cmd.icon}
             <span>{cmd.label}</span>
-            <div
-              class={`pointer-events-none absolute bottom-full z-50 mb-2 rounded bg-popover px-2 py-1 whitespace-nowrap text-popover-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100 ${index === 0 ? "left-0" : index === commands.length - 1 ? "right-0" : "left-1/2 -translate-x-1/2"} `}
-            >
-              {cmd.detail}
-              <div
-                class={`absolute top-full -mt-1 border-4 border-transparent border-t-popover ${index === 0 ? "left-4" : index === commands.length - 1 ? "right-4" : "left-1/2 -translate-x-1/2"} `}
-              ></div>
-            </div>
           </div>
         ))}
       </div>
-      <div class="flex items-center gap-1">
+      <div
+        class="flex cursor-default items-center gap-1"
+        title="Global shortcut to toggle extension"
+      >
         <span class="text-sm font-semibold">{isMac.value ? "Opt" : "Alt"}</span>
         <span>+</span>
         <span class="text-sm font-semibold">K</span>
