@@ -52,7 +52,7 @@ export const TabItem = forwardRef(({ result, isSelected, onClick, onMouseEnter }
       <img
         src={tab.favIconUrl || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>'}
         alt=""
-        class="w-4 h-4 shrink-0"
+        class="w-4 h-4 shrink-0 drop-shadow-sm"
       />
       <div class="flex-1 min-w-0">
         <div class="text-sm font-medium truncate mb-1">

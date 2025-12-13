@@ -3,8 +3,10 @@ import { useRef } from 'preact/hooks';
 import { useTabs } from '../../hooks/useTabs';
 import { useHistory } from '../../hooks/useHistory';
 import { useNavigation } from '../../hooks/useNavigation';
+import { useTheme } from '../../hooks/useTheme';
 import { TabList } from './TabList';
 import { Search } from './Search';
+import { CommandHelp } from './CommandHelp';
 import browser from 'webextension-polyfill';
 
 export function App() {
@@ -13,6 +15,7 @@ export function App() {
   const query = useSignal('');
   
   const { history, recordAccess } = useHistory();
+  const { theme, toggleTheme } = useTheme();
 
   const { filteredResults, isLoading, currentWindowId } = useTabs(query, history);
 
@@ -69,6 +72,7 @@ export function App() {
           }
         }}
       />
+      <CommandHelp theme={theme.value} onToggleTheme={toggleTheme} />
     </div>
   );
 }
