@@ -46,7 +46,7 @@ export const TabItem = forwardRef(
         ref={ref}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
-        class={`flex cursor-pointer items-center gap-3 border-b border-border px-4 py-3 transition-colors ${isSelected ? "bg-selection hover:bg-selection" : "hover:bg-muted"} `}
+        class={`flex cursor-pointer items-center gap-2 border-b border-border px-3 py-2 transition-colors last:border-b-0 ${isSelected ? "bg-selection hover:bg-selection" : "hover:bg-muted"} `}
       >
         <img
           src={
@@ -57,7 +57,7 @@ export const TabItem = forwardRef(
           class="h-4 w-4 shrink-0 drop-shadow-sm"
         />
         <div class="min-w-0 flex-1">
-          <div class="mb-1 truncate text-sm font-medium">
+          <div class="mb-0.5 truncate text-xs font-medium">
             <HighlightedText
               text={displayTitle}
               matches={matchedIn === "title" ? match.matches : []}

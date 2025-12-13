@@ -117,7 +117,7 @@ export function CommandHelp({ theme, onToggleTheme }) {
   ];
 
   return (
-    <div class="flex items-center justify-between border-t border-border bg-secondary/50 px-4 py-2 text-xs text-muted-foreground select-none">
+    <div class="flex items-center justify-between border-t border-border bg-secondary/50 px-3 py-2 text-xs text-muted-foreground select-none">
       <div class="flex items-center gap-4">
         {commands.map((cmd, index) => (
           <div
@@ -138,10 +138,10 @@ export function CommandHelp({ theme, onToggleTheme }) {
           </div>
         ))}
       </div>
-      <div class="flex items-center gap-1 opacity-50">
-        <span class="text-[10px]">{isMac.value ? "Opt" : "Alt"}</span>
+      <div class="flex items-center gap-1">
+        <span class="text-sm font-semibold">{isMac.value ? "Opt" : "Alt"}</span>
         <span>+</span>
-        <span class="text-[10px]">K</span>
+        <span class="text-sm font-semibold">K</span>
       </div>
     </div>
   );

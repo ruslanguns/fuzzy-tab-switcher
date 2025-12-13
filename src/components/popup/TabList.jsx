@@ -22,7 +22,7 @@ export function TabList({ results, selectedIndex, onSelect, onHover }) {
   }
 
   return (
-    <div class="max-h-[488px] flex-1 overflow-y-auto">
+    <div class="max-h-[488px] overflow-y-auto">
       {results.map((result, index) => (
         <TabItem
           key={result.tab.id}

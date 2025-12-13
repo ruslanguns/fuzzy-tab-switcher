@@ -59,7 +59,7 @@ export function App() {
 
   return (
     <div
-      class="flex h-full max-h-[600px] w-[600px] flex-col rounded-lg bg-background text-foreground"
+      class="flex h-auto max-h-[600px] w-[500px] flex-col bg-background font-sans text-foreground antialiased"
       onMouseMove={() => (isMouseActive.current = true)}
     >
       <Search
