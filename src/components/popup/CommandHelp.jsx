@@ -26,8 +26,9 @@ export function CommandHelp({ theme, onToggleTheme }) {
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <path d="M12 19V5" />
-          <path d="m5 12 7-7 7 7" />
+          <polyline points="8 18 12 22 16 18" />
+          <polyline points="8 6 12 2 16 6" />
+          <line x1="12" x2="12" y1="2" y2="22" />
         </svg>
       ),
     },
