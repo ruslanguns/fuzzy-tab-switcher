@@ -1,7 +1,8 @@
 import { useSignal, useSignalEffect } from '@preact/signals';
 import browser from 'webextension-polyfill';
+import { STORAGE_KEY_HISTORY } from '../constants';
 
-const STORAGE_KEY = 'fts_tab_history';
+const STORAGE_KEY = STORAGE_KEY_HISTORY;
 const CLEANUP_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function useHistory() {

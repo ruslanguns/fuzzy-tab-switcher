@@ -26,6 +26,13 @@
         "default": "Ctrl+Shift+K",
         "mac": "Command+Shift+K"
       }
+    },
+    "quick-switch": {
+      "suggested_key": {
+        "default": "Alt+Q",
+        "mac": "Alt+Q"
+      },
+      "description": "Switch to the previously active tab"
     }
   },
   "action": {
