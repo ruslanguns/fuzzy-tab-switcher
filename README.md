@@ -6,9 +6,9 @@ A high-performance tab switcher focused on speed and keyboard navigation. Replac
 
 - **Intelligent Fuzzy Search**: Custom scoring algorithm that matches against both Title and URL (`Title` vs `URL` weighting). Prioritizes sequential matches and word boundaries.
 - **Cross-Window Context**: Queries `browser.tabs` globally, allowing seamless switching effectively treating the entire browser session as a single workspace.
-- **MRU Sorting**: Uses `historySignal` to track access patterns. Results are sorted by:
-  1.  Fuzzy Match Score
-  2.  Last Access Time (Most Recently Used)
+- **Smart Sorting**:
+  1. **Visual Order**: Defaults to natural matching browser tab order when query is empty.
+  2. **MRU**: Sorts by "Last Access Time" (Most Recently Used) when searching.
 - **Privacy**: Zero external requests. All history state is persisted in `browser.storage.local`.
 
 ## Technical Stack
@@ -80,11 +80,12 @@ Built with a modern, compile-to-JS toolchain for performance and maintainability
 
 ## Usage
 
-| Shortcut                                                  | Action                |
-| :-------------------------------------------------------- | :-------------------- |
-| **Cmd+Shift+K** (macOS) <br> **Ctrl+Shift+K** (Win/Linux) | **Open Tab Switcher** |
-| **Tab** / **Shift+Tab**                                   | Navigate selection    |
-| **Enter**                                                 | Switch to tab         |
+| Shortcut                                                   | Action                                |
+| :--------------------------------------------------------- | :------------------------------------ |
+| **Cmd+Shift+K** (macOS) </br> **Ctrl+Shift+K** (Win/Linux) | **Open Tab Switcher**                 |
+| **Tab** / **Shift+Tab**                                    | Navigate selection                    |
+| **Alt+Q**                                                  | Switch to previous tab (Quick Switch) |
+| **Enter**                                                  | Switch to tab                         |
 
 ## License
 
