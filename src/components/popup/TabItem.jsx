@@ -1,14 +1,5 @@
 import { forwardRef } from "preact/compat";
 
-const formatUrl = (url) => {
-  try {
-    const urlObj = new URL(url);
-    return urlObj.hostname + urlObj.pathname + urlObj.search;
-  } catch {
-    return url;
-  }
-};
-
 const HighlightedText = ({ text, matches }) => {
   if (!matches || matches.length === 0) return <span>{text}</span>;
 
@@ -36,10 +27,9 @@ const HighlightedText = ({ text, matches }) => {
 
 export const TabItem = forwardRef(
   ({ result, isSelected, onClick, onMouseEnter }, ref) => {
-    const { tab, match, matchedIn } = result;
+    const { tab, displayUrl } = result;
 
     const displayTitle = tab.title || "Untitled";
-    const displayUrl = formatUrl(tab.url);
 
     return (
       <div
@@ -60,14 +50,14 @@ export const TabItem = forwardRef(
           <div class="mb-0.5 truncate text-xs font-medium">
             <HighlightedText
               text={displayTitle}
-              matches={matchedIn === "title" ? match.matches : []}
+              matches={result.titleMatch?.matches || []}
             />
             {tab.audible && " 🔊"}
           </div>
           <div class="truncate text-xs text-muted-foreground">
             <HighlightedText
               text={displayUrl}
-              matches={matchedIn === "url" ? match.matches : []}
+              matches={result.urlMatch?.matches || []}
             />
           </div>
         </div>

@@ -34,7 +34,7 @@ export function useTabs(query, historySignal) {
         lastAccess: historySignal.value[result.tab.id] || 0,
       }))
       .sort(
-        (a, b) => b.match.score - a.match.score || b.lastAccess - a.lastAccess,
+        (a, b) => b.score - a.score || b.lastAccess - a.lastAccess,
       );
   });
 
