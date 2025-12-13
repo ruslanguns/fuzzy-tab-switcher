@@ -9,6 +9,7 @@ import browser from 'webextension-polyfill';
 
 export function App() {
   const searchRef = useRef(null);
+  const isMouseActive = useRef(false);
   const query = useSignal('');
   
   const { history, recordAccess } = useHistory();
@@ -34,6 +35,11 @@ export function App() {
 
   const { selectedIndex, handleKeyDown } = useNavigation(filteredResults, switchTab);
 
+  const onKeyDown = (e) => {
+    isMouseActive.current = false;
+    handleKeyDown(e);
+  };
+
   if (isLoading.value) {
     return (
       <div class="flex items-center justify-center h-screen bg-background text-muted-foreground p-4">
@@ -43,18 +49,25 @@ export function App() {
   }
 
   return (
-    <div class="flex flex-col h-full bg-background text-foreground w-[600px] max-h-[600px]">
+    <div 
+      class="flex flex-col h-full bg-background text-foreground w-[600px] max-h-[600px]"
+      onMouseMove={() => isMouseActive.current = true}
+    >
       <Search
         ref={searchRef}
         value={query.value}
         onInput={(e) => query.value = e.target.value}
-        onKeyDown={handleKeyDown}
+        onKeyDown={onKeyDown}
       />
       <TabList
         results={filteredResults.value}
         selectedIndex={selectedIndex.value}
         onSelect={(idx) => switchTab(filteredResults.value[idx])}
-        onHover={(idx) => selectedIndex.value = idx}
+        onHover={(idx) => {
+          if (isMouseActive.current) {
+            selectedIndex.value = idx;
+          }
+        }}
       />
     </div>
   );
