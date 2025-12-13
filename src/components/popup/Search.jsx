@@ -81,9 +81,6 @@ export const Search = forwardRef(({ value, onInput, onKeyDown }, ref) => {
         class="peer flex-1 bg-transparent py-2.5 pr-24 pl-10 text-sm text-foreground outline-none placeholder:text-muted-foreground/70"
       />
       <div class="pointer-events-none absolute right-3 flex items-center gap-2">
-        <span class="text-[10px] font-medium text-muted-foreground">
-          to select
-        </span>
         <kbd class="flex h-5 items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -100,6 +97,9 @@ export const Search = forwardRef(({ value, onInput, onKeyDown }, ref) => {
             <path d="M20 4v7a4 4 0 0 1-4 4H4" />
           </svg>
         </kbd>
+        <span class="text-[10px] font-medium text-muted-foreground">
+          to select
+        </span>
       </div>
     </div>
   );

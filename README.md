@@ -107,3 +107,7 @@ npm run build:chrome
 ## License
 
 MIT
+
+## Author
+
+[Ruslan Gonzalez](https://x.com/ruslanguns)
