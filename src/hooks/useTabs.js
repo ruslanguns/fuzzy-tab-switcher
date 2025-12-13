@@ -1,7 +1,7 @@
-import { useSignal, useComputed } from '@preact/signals';
-import { useEffect } from 'preact/hooks';
-import browser from 'webextension-polyfill';
-import { useFuzzy } from './useFuzzy';
+import { useSignal, useComputed } from "@preact/signals";
+import { useEffect } from "preact/hooks";
+import browser from "webextension-polyfill";
+import { useFuzzy } from "./useFuzzy";
 
 export function useTabs(query, historySignal) {
   const tabs = useSignal([]);
@@ -11,14 +11,14 @@ export function useTabs(query, historySignal) {
   const refresh = async () => {
     const [allTabs, win] = await Promise.all([
       browser.tabs.query({}),
-      browser.windows.getCurrent()
+      browser.windows.getCurrent(),
     ]);
-    
+
     currentWindowId.value = win.id;
-    
-    tabs.value = allTabs.map(t => ({
+
+    tabs.value = allTabs.map((t) => ({
       ...t,
-      isInCurrentWindow: t.windowId === win.id
+      isInCurrentWindow: t.windowId === win.id,
     }));
     isLoading.value = false;
   };
@@ -27,11 +27,15 @@ export function useTabs(query, historySignal) {
 
   const filteredResults = useComputed(() => {
     const results = fuzzyResults.value;
-    
-    return results.map(result => ({
-      ...result,
-      lastAccess: historySignal.value[result.tab.id] || 0
-    })).sort((a, b) => b.match.score - a.match.score || b.lastAccess - a.lastAccess);
+
+    return results
+      .map((result) => ({
+        ...result,
+        lastAccess: historySignal.value[result.tab.id] || 0,
+      }))
+      .sort(
+        (a, b) => b.match.score - a.match.score || b.lastAccess - a.lastAccess,
+      );
   });
 
   useEffect(() => {
@@ -43,7 +47,7 @@ export function useTabs(query, historySignal) {
       browser.tabs.onUpdated.addListener(update);
       browser.tabs.onRemoved.addListener(update);
     }
-    
+
     return () => {
       if (browser.tabs) {
         browser.tabs.onCreated.removeListener(update);
@@ -58,6 +62,6 @@ export function useTabs(query, historySignal) {
     currentWindowId,
     isLoading,
     filteredResults,
-    refresh
+    refresh,
   };
 }

@@ -1,23 +1,26 @@
-import { useSignal } from '@preact/signals';
-import { useRef } from 'preact/hooks';
-import { useTabs } from '../../hooks/useTabs';
-import { useHistory } from '../../hooks/useHistory';
-import { useNavigation } from '../../hooks/useNavigation';
-import { useTheme } from '../../hooks/useTheme';
-import { TabList } from './TabList';
-import { Search } from './Search';
-import { CommandHelp } from './CommandHelp';
-import browser from 'webextension-polyfill';
+import { useSignal } from "@preact/signals";
+import { useRef } from "preact/hooks";
+import { useTabs } from "../../hooks/useTabs";
+import { useHistory } from "../../hooks/useHistory";
+import { useNavigation } from "../../hooks/useNavigation";
+import { useTheme } from "../../hooks/useTheme";
+import { TabList } from "./TabList";
+import { Search } from "./Search";
+import { CommandHelp } from "./CommandHelp";
+import browser from "webextension-polyfill";
 
 export function App() {
   const searchRef = useRef(null);
   const isMouseActive = useRef(false);
-  const query = useSignal('');
-  
+  const query = useSignal("");
+
   const { history, recordAccess } = useHistory();
   const { theme, toggleTheme } = useTheme();
 
-  const { filteredResults, isLoading, currentWindowId } = useTabs(query, history);
+  const { filteredResults, isLoading, currentWindowId } = useTabs(
+    query,
+    history,
+  );
 
   const switchTab = async (item) => {
     if (!item) return;
@@ -36,7 +39,10 @@ export function App() {
     }
   };
 
-  const { selectedIndex, handleKeyDown } = useNavigation(filteredResults, switchTab);
+  const { selectedIndex, handleKeyDown } = useNavigation(
+    filteredResults,
+    switchTab,
+  );
 
   const onKeyDown = (e) => {
     isMouseActive.current = false;
@@ -45,21 +51,21 @@ export function App() {
 
   if (isLoading.value) {
     return (
-      <div class="flex items-center justify-center h-screen bg-background text-muted-foreground p-4">
+      <div class="flex h-screen items-center justify-center rounded-lg bg-background p-4 text-muted-foreground">
         Loading...
       </div>
     );
   }
 
   return (
-    <div 
-      class="flex flex-col h-full bg-background text-foreground w-[600px] max-h-[600px]"
-      onMouseMove={() => isMouseActive.current = true}
+    <div
+      class="flex h-full max-h-[600px] w-[600px] flex-col rounded-lg bg-background text-foreground"
+      onMouseMove={() => (isMouseActive.current = true)}
     >
       <Search
         ref={searchRef}
         value={query.value}
-        onInput={(e) => query.value = e.target.value}
+        onInput={(e) => (query.value = e.target.value)}
         onKeyDown={onKeyDown}
       />
       <TabList

@@ -1,4 +1,4 @@
-import { useComputed } from '@preact/signals';
+import { useComputed } from "@preact/signals";
 
 function fuzzyMatch(pattern, text) {
   if (!pattern) return { score: 0, matches: [] };
@@ -31,8 +31,13 @@ function fuzzyMatch(pattern, text) {
     return null;
   }
 
-  matches.forEach(idx => {
-    if (idx === 0 || text[idx - 1] === ' ' || text[idx - 1] === '-' || text[idx - 1] === '/') {
+  matches.forEach((idx) => {
+    if (
+      idx === 0 ||
+      text[idx - 1] === " " ||
+      text[idx - 1] === "-" ||
+      text[idx - 1] === "/"
+    ) {
       score += 2;
     }
   });
@@ -42,45 +47,47 @@ function fuzzyMatch(pattern, text) {
   return { score, matches };
 }
 
-export function useFuzzy(itemsSignal, querySignal, keys = ['title', 'url']) {
+export function useFuzzy(itemsSignal, querySignal, keys = ["title", "url"]) {
   return useComputed(() => {
     const items = itemsSignal.value;
     const query = querySignal.value;
 
-    if (!query) return items.map(tab => ({
-      tab,
-      match: { score: 0, matches: [] },
-      matchedIn: null
-    }));
+    if (!query)
+      return items.map((tab) => ({
+        tab,
+        match: { score: 0, matches: [] },
+        matchedIn: null,
+      }));
 
-    return items.map(item => {
-      const tab = item;
-      const titleMatch = fuzzyMatch(query, tab.title || '');
-      const urlMatch = fuzzyMatch(query, tab.url || '');
+    return items
+      .map((item) => {
+        const tab = item;
+        const titleMatch = fuzzyMatch(query, tab.title || "");
+        const urlMatch = fuzzyMatch(query, tab.url || "");
 
-      let match, matchedIn;
+        let match, matchedIn;
 
-      if (urlMatch) {
-        match = { ...urlMatch, score: urlMatch.score * 1.5 };
-        matchedIn = 'url';
-      } else if (titleMatch) {
-        match = titleMatch;
-        matchedIn = 'title';
-      } else {
-        return null;
-      }
-
-      if (urlMatch && titleMatch) {
-        const boostedUrlScore = urlMatch.score * 1.5;
-        if (boostedUrlScore < titleMatch.score) {
+        if (urlMatch) {
+          match = { ...urlMatch, score: urlMatch.score * 1.5 };
+          matchedIn = "url";
+        } else if (titleMatch) {
           match = titleMatch;
-          matchedIn = 'title';
+          matchedIn = "title";
+        } else {
+          return null;
         }
-      }
 
-      return { tab, match, matchedIn };
-    })
-    .filter(Boolean)
-    .sort((a, b) => b.match.score - a.match.score);
+        if (urlMatch && titleMatch) {
+          const boostedUrlScore = urlMatch.score * 1.5;
+          if (boostedUrlScore < titleMatch.score) {
+            match = titleMatch;
+            matchedIn = "title";
+          }
+        }
+
+        return { tab, match, matchedIn };
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.match.score - a.match.score);
   });
 }

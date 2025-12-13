@@ -1,6 +1,6 @@
-import { useSignal, useSignalEffect } from '@preact/signals';
-import browser from 'webextension-polyfill';
-import { STORAGE_KEY_HISTORY } from '../constants';
+import { useSignal, useSignalEffect } from "@preact/signals";
+import browser from "webextension-polyfill";
+import { STORAGE_KEY_HISTORY } from "../constants";
 
 const STORAGE_KEY = STORAGE_KEY_HISTORY;
 const CLEANUP_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000;
@@ -22,7 +22,7 @@ export function useHistory() {
         await browser.storage.local.set({ [STORAGE_KEY]: cleaned });
         loadedHistory = cleaned;
       }
-      
+
       history.value = loadedHistory;
     };
     load();
@@ -36,6 +36,6 @@ export function useHistory() {
 
   return {
     history,
-    recordAccess
+    recordAccess,
   };
 }

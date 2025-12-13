@@ -1,5 +1,9 @@
-import browser from 'webextension-polyfill';
-import { STORAGE_KEY_HISTORY, STORAGE_KEY_TOGGLE, CMD_QUICK_SWITCH } from './constants';
+import browser from "webextension-polyfill";
+import {
+  STORAGE_KEY_HISTORY,
+  STORAGE_KEY_TOGGLE,
+  CMD_QUICK_SWITCH,
+} from "./constants";
 
 const getToggleHistory = async () => {
   const data = await browser.storage.local.get(STORAGE_KEY_TOGGLE);
@@ -19,7 +23,10 @@ const updateTimestampHistory = async (tabId) => {
 
 browser.tabs.onActivated.addListener(async ({ tabId, windowId }) => {
   const allToggleHistory = await getToggleHistory();
-  const toggleHistory = allToggleHistory[windowId] || { current: null, previous: null };
+  const toggleHistory = allToggleHistory[windowId] || {
+    current: null,
+    previous: null,
+  };
 
   if (toggleHistory.current !== tabId) {
     toggleHistory.previous = toggleHistory.current;
@@ -37,20 +44,22 @@ browser.windows.onRemoved.addListener(async (windowId) => {
   await setToggleHistory(allHistory);
 });
 
-browser.tabs.onRemoved.addListener(async (tabId, { windowId, isWindowClosing }) => {
-  if (isWindowClosing) return;
+browser.tabs.onRemoved.addListener(
+  async (tabId, { windowId, isWindowClosing }) => {
+    if (isWindowClosing) return;
 
-  const allHistory = await getToggleHistory();
-  const history = allHistory[windowId];
-  if (!history) return;
+    const allHistory = await getToggleHistory();
+    const history = allHistory[windowId];
+    if (!history) return;
 
-  if (history.current === tabId) history.current = null;
-  if (history.previous === tabId) history.previous = null;
-  await setToggleHistory(allHistory);
-});
+    if (history.current === tabId) history.current = null;
+    if (history.previous === tabId) history.previous = null;
+    await setToggleHistory(allHistory);
+  },
+);
 
 browser.commands.onCommand.addListener(async (command) => {
-  console.log('Fuzzy Tab Switcher: Command received', command);
+  console.log("Fuzzy Tab Switcher: Command received", command);
   if (command !== CMD_QUICK_SWITCH) return;
 
   try {

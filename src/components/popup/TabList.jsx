@@ -1,12 +1,15 @@
-import { useEffect, useRef } from 'preact/hooks';
-import { TabItem } from './TabItem';
+import { useEffect, useRef } from "preact/hooks";
+import { TabItem } from "./TabItem";
 
 export function TabList({ results, selectedIndex, onSelect, onHover }) {
   const selectedRef = useRef(null);
 
   useEffect(() => {
     if (selectedRef.current) {
-      selectedRef.current.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+      selectedRef.current.scrollIntoView({
+        block: "nearest",
+        behavior: "auto",
+      });
     }
   }, [selectedIndex]);
 
@@ -19,7 +22,7 @@ export function TabList({ results, selectedIndex, onSelect, onHover }) {
   }
 
   return (
-    <div class="flex-1 overflow-y-auto max-h-[488px]">
+    <div class="max-h-[488px] flex-1 overflow-y-auto">
       {results.map((result, index) => (
         <TabItem
           key={result.tab.id}

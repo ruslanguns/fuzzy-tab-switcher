@@ -1,10 +1,13 @@
-import { useSignal, useSignalEffect } from '@preact/signals';
+import { useSignal, useSignalEffect } from "@preact/signals";
 
 export function useNavigation(resultsSignal, onSelect) {
   const selectedIndex = useSignal(0);
 
   useSignalEffect(() => {
-    if (resultsSignal.value.length > 0 && selectedIndex.value >= resultsSignal.value.length) {
+    if (
+      resultsSignal.value.length > 0 &&
+      selectedIndex.value >= resultsSignal.value.length
+    ) {
       selectedIndex.value = 0;
     }
   });
@@ -14,15 +17,15 @@ export function useNavigation(resultsSignal, onSelect) {
     if (len === 0) return;
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
         selectedIndex.value = (selectedIndex.value + 1) % len;
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
         selectedIndex.value = (selectedIndex.value - 1 + len) % len;
         break;
-      case 'Tab':
+      case "Tab":
         e.preventDefault();
         if (e.shiftKey) {
           selectedIndex.value = (selectedIndex.value - 1 + len) % len;
@@ -30,7 +33,7 @@ export function useNavigation(resultsSignal, onSelect) {
           selectedIndex.value = (selectedIndex.value + 1) % len;
         }
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         onSelect(resultsSignal.value[selectedIndex.value]);
         break;
@@ -39,6 +42,6 @@ export function useNavigation(resultsSignal, onSelect) {
 
   return {
     selectedIndex,
-    handleKeyDown
+    handleKeyDown,
   };
 }

@@ -1,4 +1,5 @@
-import { forwardRef } from 'preact/compat';
+import { forwardRef } from "preact/compat";
+
 const formatUrl = (url) => {
   try {
     const urlObj = new URL(url);
@@ -19,9 +20,9 @@ const HighlightedText = ({ text, matches }) => {
       parts.push(text.slice(lastIndex, index));
     }
     parts.push(
-      <span key={i} class="text-match font-bold">
+      <span key={i} class="font-bold text-match">
         {text[index]}
-      </span>
+      </span>,
     );
     lastIndex = index + 1;
   });
@@ -31,44 +32,46 @@ const HighlightedText = ({ text, matches }) => {
   }
 
   return <span>{parts}</span>;
-}
+};
 
-export const TabItem = forwardRef(({ result, isSelected, onClick, onMouseEnter }, ref) => {
-  const { tab, match, matchedIn } = result;
+export const TabItem = forwardRef(
+  ({ result, isSelected, onClick, onMouseEnter }, ref) => {
+    const { tab, match, matchedIn } = result;
 
-  const displayTitle = tab.title || 'Untitled';
-  const displayUrl = formatUrl(tab.url);
+    const displayTitle = tab.title || "Untitled";
+    const displayUrl = formatUrl(tab.url);
 
-  return (
-    <div
-      ref={ref}
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      class={`
-        flex items-center gap-3 px-4 py-3 border-b border-border cursor-pointer transition-colors
-        ${isSelected ? 'bg-selection hover:bg-selection' : 'hover:bg-muted'}
-      `}
-    >
-      <img
-        src={tab.favIconUrl || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>'}
-        alt=""
-        class="w-4 h-4 shrink-0 drop-shadow-sm"
-      />
-      <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium truncate mb-1">
-          <HighlightedText
-            text={displayTitle}
-            matches={matchedIn === 'title' ? match.matches : []}
-          />
-          {tab.audible && ' 🔊'}
-        </div>
-        <div class="text-xs text-muted-foreground truncate">
-          <HighlightedText
-            text={displayUrl}
-            matches={matchedIn === 'url' ? match.matches : []}
-          />
+    return (
+      <div
+        ref={ref}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        class={`flex cursor-pointer items-center gap-3 border-b border-border px-4 py-3 transition-colors ${isSelected ? "bg-selection hover:bg-selection" : "hover:bg-muted"} `}
+      >
+        <img
+          src={
+            tab.favIconUrl ||
+            'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>'
+          }
+          alt=""
+          class="h-4 w-4 shrink-0 drop-shadow-sm"
+        />
+        <div class="min-w-0 flex-1">
+          <div class="mb-1 truncate text-sm font-medium">
+            <HighlightedText
+              text={displayTitle}
+              matches={matchedIn === "title" ? match.matches : []}
+            />
+            {tab.audible && " 🔊"}
+          </div>
+          <div class="truncate text-xs text-muted-foreground">
+            <HighlightedText
+              text={displayUrl}
+              matches={matchedIn === "url" ? match.matches : []}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);

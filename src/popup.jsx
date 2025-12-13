@@ -1,5 +1,5 @@
-import { render } from 'preact';
-import { App } from './components/popup/App';
-import './styles/main.css';
+import { render } from "preact";
+import { App } from "./components/popup/App";
+import "./styles/main.css";
 
-render(<App />, document.getElementById('app'));
+render(<App />, document.getElementById("app"));
