@@ -1,3 +1,5 @@
+import { useComputed } from '@preact/signals';
+
 function fuzzyMatch(pattern, text) {
   if (!pattern) return { score: 0, matches: [] };
 
@@ -40,11 +42,19 @@ function fuzzyMatch(pattern, text) {
   return { score, matches };
 }
 
-export function fuzzySearch(tabs, query) {
-  if (!query) return tabs;
+export function useFuzzy(itemsSignal, querySignal, keys = ['title', 'url']) {
+  return useComputed(() => {
+    const items = itemsSignal.value;
+    const query = querySignal.value;
 
-  const results = tabs
-    .map(tab => {
+    if (!query) return items.map(tab => ({
+      tab,
+      match: { score: 0, matches: [] },
+      matchedIn: null
+    }));
+
+    return items.map(item => {
+      const tab = item;
       const titleMatch = fuzzyMatch(query, tab.title || '');
       const urlMatch = fuzzyMatch(query, tab.url || '');
 
@@ -72,6 +82,5 @@ export function fuzzySearch(tabs, query) {
     })
     .filter(Boolean)
     .sort((a, b) => b.match.score - a.match.score);
-
-  return results;
+  });
 }

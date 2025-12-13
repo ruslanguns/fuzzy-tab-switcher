@@ -12,14 +12,14 @@ export function TabList({ results, selectedIndex, onSelect, onHover }) {
 
   if (results.length === 0) {
     return (
-      <div class="flex items-center justify-center py-10 text-[#858585]">
+      <div class="flex items-center justify-center py-10 text-muted-foreground">
         No tabs found
       </div>
     );
   }
 
   return (
-    <div class="flex-1 overflow-y-auto max-h-[488px] scrollbar-thin scrollbar-thumb-[#3e3e3e] scrollbar-track-[#1e1e1e]">
+    <div class="flex-1 overflow-y-auto max-h-[488px]">
       {results.map((result, index) => (
         <TabItem
           key={result.tab.id}
