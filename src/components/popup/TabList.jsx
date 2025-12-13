@@ -6,7 +6,7 @@ export function TabList({ results, selectedIndex, onSelect, onHover }) {
 
   useEffect(() => {
     if (selectedRef.current) {
-      selectedRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      selectedRef.current.scrollIntoView({ block: 'nearest', behavior: 'auto' });
     }
   }, [selectedIndex]);
 
