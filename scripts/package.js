@@ -12,7 +12,8 @@ if (!TARGET) {
 }
 
 const distDir = path.resolve(__dirname, `../dist/${TARGET}`);
-const zipName = `fuzzy-tab-switcher-${TARGET}.zip`;
+const date = new Date().toISOString().split('T')[0];
+const zipName = `fuzzy-tab-switcher-${TARGET}-${date}.zip`;
 const zipPath = path.resolve(__dirname, `../${zipName}`);
 
 if (!fs.existsSync(distDir)) {

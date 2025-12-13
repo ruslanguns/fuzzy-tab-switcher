@@ -1,0 +1,122 @@
+name: Main Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: DEFAULT
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Check Version and Tag
+        id: check_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="v$VERSION"
+          
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Error: Tag $TAG already exists."
+            exit 1
+          fi
+          
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "Version is $VERSION, Tag will be $TAG"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and Package
+        run: |
+          npm run package:chrome
+          npm run package:firefox
+          npm run package:safari
+
+      - name: Determine Changelog Range
+        id: changelog_range
+        run: |
+          if git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            PREVIOUS_TAG=$(git describe --tags --abbrev=0)
+            echo "Found previous tag: $PREVIOUS_TAG"
+            echo "FROM_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
+          else
+            FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
+            echo "No previous tag found. Using first commit: $FIRST_COMMIT"
+            echo "FROM_TAG=$FIRST_COMMIT" >> $GITHUB_ENV
+          fi
+
+      - name: Build Changelog
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          fromTag: ${{ env.FROM_TAG }}
+          toTag: HEAD
+          commitMode: true
+          configuration: .github/release-changelog-config.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update CHANGELOG.md
+        run: |
+          echo "# ${{ env.TAG }} ($(date +'%Y-%m-%d'))" > new_changelog.md
+          echo "" >> new_changelog.md
+          echo "${{ steps.build_changelog.outputs.changelog }}" >> new_changelog.md
+          echo "" >> new_changelog.md
+          
+          if [ -f CHANGELOG.md ]; then
+            cat CHANGELOG.md >> new_changelog.md
+          fi
+          mv new_changelog.md CHANGELOG.md
+
+      - name: Commit and Push Changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update changelog for ${{ env.TAG }}"
+          git push origin HEAD:main
+
+      - name: Create Tag
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin ${{ env.TAG }}
+
+      - name: Generate Checksums
+        run: |
+          sha256sum fuzzy-tab-switcher-*.zip > checksums.txt
+          cat checksums.txt
+
+      - name: Import GPG Key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Sign Checksums
+        run: |
+          gpg --detach-sign --armor checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          name: Release ${{ env.TAG }}
+          body: ${{ steps.build_changelog.outputs.changelog }}
+          files: |
+            fuzzy-tab-switcher-*.zip
+            checksums.txt*
+          fail_on_unmatched_files: true

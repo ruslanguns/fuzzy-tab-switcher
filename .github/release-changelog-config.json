@@ -1,0 +1,95 @@
+{
+  "categories": [
+    {
+      "title": "## ✨ Features",
+      "labels": [],
+      "rules": [
+        {
+          "pattern": "^feat",
+          "on_property": "title"
+        }
+      ]
+    },
+    {
+      "title": "## 🐛 Bug Fixes",
+      "labels": [],
+      "rules": [
+        {
+          "pattern": "^fix",
+          "on_property": "title"
+        }
+      ]
+    },
+    {
+      "title": "## 💄 Styles",
+      "labels": [],
+      "rules": [
+        {
+          "pattern": "^style",
+          "on_property": "title"
+        }
+      ]
+    },
+    {
+      "title": "## ♻️ Refactoring",
+      "labels": [],
+      "rules": [
+        {
+          "pattern": "^refactor",
+          "on_property": "title"
+        }
+      ]
+    },
+    {
+      "title": "## 📝 Documentation",
+      "labels": [],
+      "rules": [
+        {
+          "pattern": "^docs",
+          "on_property": "title"
+        }
+      ]
+    },
+    {
+      "title": "## 🏗️ Chores",
+      "labels": [],
+      "rules": [
+        {
+          "pattern": "^chore",
+          "on_property": "title"
+        }
+      ]
+    },
+    {
+      "title": "## ⚡ Performance",
+      "labels": [],
+      "rules": [
+        {
+          "pattern": "^perf",
+          "on_property": "title"
+        }
+      ]
+    },
+    {
+      "title": "## 🔧 CI/CD",
+      "labels": [],
+      "rules": [
+        {
+          "pattern": "^ci",
+          "on_property": "title"
+        }
+      ]
+    }
+  ],
+  "sort": {
+    "order": "DESC",
+    "on_property": "mergedAt"
+  },
+  "template": "#{{CHANGELOG}}",
+  "pr_template": "- #{{TITLE}}",
+  "commit_template": "- #{{TITLE}}",
+  "empty_template": "No changes",
+  "transformers": [],
+  "max_tags_to_fetch": 200,
+  "max_back_track_time_days": 365
+}
