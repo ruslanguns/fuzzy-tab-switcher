@@ -1,13 +1,3 @@
-# v1.1.1 (2025-12-14)
-
-## 🏗️ Chores
-
-- chore: Use package.json version for zip filename and ignore generated zip files
-- chore: workaround to complain with Firefox
-- chore: update safari manifest Compliance Audit
-
-
-
 # v1.1.0 (2025-12-14)
 
 ## ✨ Features
@@ -17,8 +7,6 @@
 ## 🏗️ Chores
 
 - chore: centralize versioning from package.json as source of truth
-
-
 
 # v1.0.0 (2025-12-13)
 
@@ -30,7 +18,7 @@
 - feat: reimplement fuzzy matching algorithm with substring optimization
 - feat: Replace custom tooltips with native browser tooltips and update cursor styles.
 - feat: Implement animated search placeholder, reduce popup width, and refine overall UI spacing and typography.
-- feat: Configure build process to output browser-specific builds into distinct  directories.
+- feat: Configure build process to output browser-specific builds into distinct directories.
 - feat: Add theme switching functionality and command help component
 - feat: Implement target-specific manifest building for multi-browser support
 - feat: add description for browser action in manifest.json
@@ -63,6 +51,3 @@
 ## 🔧 CI/CD
 
 - ci: Add GitHub Actions release workflow, promotional assets, and date-stamp packaged zip files.
-
-
-
