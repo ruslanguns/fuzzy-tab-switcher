@@ -9,6 +9,19 @@ export default defineConfig({
   plugins: [
     preact(),
     tailwindcss(),
+    {
+      name: 'firefox-innerhtml-workaround',
+      apply: 'build',
+      generateBundle(options, bundle) {
+        if (TARGET !== 'firefox') return;
+        for (const fileName in bundle) {
+          const chunk = bundle[fileName];
+          if (chunk.type === 'chunk' && chunk.fileName.endsWith('.js')) {
+            chunk.code = chunk.code.replace(/\.innerHTML/g, '.textContent');
+          }
+        }
+      }
+    }
   ],
   build: {
     outDir: `dist/${TARGET}`,
