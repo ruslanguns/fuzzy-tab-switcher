@@ -5,10 +5,18 @@
   "version": "1.0.0",
   "author": "Ruslan Gonzalez <ruslanguns@gmail.com>",
   "permissions": ["tabs", "storage"],
-  "browser_specific_settings": {
+  "__firefox__browser_specific_settings": {
     "gecko": {
       "id": "ruslan-fts@ruso.dev",
-      "strict_min_version": "109.0"
+      "strict_min_version": "112.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "__safari__browser_specific_settings": {
+    "safari": {
+      "strict_min_version": "15.4"
     }
   },
   "icons": {
