@@ -10,10 +10,12 @@ console.log(`Building manifest for target: ${TARGET}`);
 
 const srcPath = path.resolve(__dirname, '../src/manifest.json');
 const distPath = path.resolve(__dirname, `../dist/${TARGET}/manifest.json`);
+const packagePath = path.resolve(__dirname, '../package.json');
 
 fs.mkdirSync(path.dirname(distPath), { recursive: true });
 
 const manifestSource = JSON.parse(fs.readFileSync(srcPath, 'utf-8'));
+const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
 
 function processManifest(obj) {
   if (Array.isArray(obj)) {
@@ -44,6 +46,9 @@ function processManifest(obj) {
 }
 
 let finalManifest = processManifest(manifestSource);
+
+finalManifest.version = packageJson.version;
+console.log(`Using version ${packageJson.version} from package.json`);
 
 if (TARGET === 'safari' && finalManifest.commands) {
   Object.keys(finalManifest.commands).forEach(commandKey => {
