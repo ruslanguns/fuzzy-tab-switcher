@@ -1,3 +1,13 @@
+# v1.1.1 (2025-12-14)
+
+## 🏗️ Chores
+
+- chore: Use package.json version for zip filename and ignore generated zip files
+- chore: workaround to complain with Firefox
+- chore: update safari manifest Compliance Audit
+
+
+
 # v1.1.0 (2025-12-14)
 
 ## ✨ Features
