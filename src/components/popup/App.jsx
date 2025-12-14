@@ -1,4 +1,4 @@
-import { useSignal } from "@preact/signals";
+import { useSignal, useSignalEffect } from "@preact/signals";
 import { useRef } from "preact/hooks";
 import { useTabs } from "../../hooks/useTabs";
 import { useHistory } from "../../hooks/useHistory";
@@ -13,6 +13,17 @@ export function App() {
   const searchRef = useRef(null);
   const isMouseActive = useRef(false);
   const query = useSignal("");
+  const toggleShortcut = useSignal(null);
+
+  useSignalEffect(() => {
+    browser.commands.getAll().then((commands) => {
+      commands.forEach((command) => {
+        if (command.name === "_execute_action" && command.shortcut) {
+          toggleShortcut.value = command.shortcut;
+        }
+      });
+    });
+  });
 
   const { history, recordAccess } = useHistory();
   const { theme, toggleTheme } = useTheme();
@@ -44,8 +55,48 @@ export function App() {
     switchTab,
   );
 
+  const matchesShortcut = (event, shortcut) => {
+    if (!shortcut) return false;
+
+    const normalizedShortcut = shortcut
+      .replace("⌘", "Command")
+      .replace("⌥", "Alt")
+      .replace("⇧", "Shift")
+      .replace("⌃", "Ctrl");
+
+    const parts = normalizedShortcut.includes("+")
+      ? normalizedShortcut.split("+")
+      : normalizedShortcut.match(/(Command|Alt|Shift|Ctrl)|./g) || [];
+
+    const key = parts[parts.length - 1]?.toLowerCase();
+    if (event.key.toLowerCase() !== key) return false;
+
+    const modifiers = {
+      Command: event.metaKey,
+      Alt: event.altKey,
+      Shift: event.shiftKey,
+      Ctrl: event.ctrlKey,
+    };
+
+    return Object.entries(modifiers).every(
+      ([mod, isPressed]) => parts.includes(mod) === isPressed
+    );
+  };
+
   const onKeyDown = (e) => {
     isMouseActive.current = false;
+
+    if (e.key === "Escape") {
+      window.close();
+      return;
+    }
+
+    if (matchesShortcut(e, toggleShortcut.value)) {
+      e.preventDefault();
+      window.close();
+      return;
+    }
+
     handleKeyDown(e);
   };
 

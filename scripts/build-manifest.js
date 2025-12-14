@@ -43,6 +43,21 @@ function processManifest(obj) {
   return obj;
 }
 
-const finalManifest = processManifest(manifestSource);
+let finalManifest = processManifest(manifestSource);
+
+if (TARGET === 'safari' && finalManifest.commands) {
+  Object.keys(finalManifest.commands).forEach(commandKey => {
+    const command = finalManifest.commands[commandKey];
+    if (command.suggested_key && command.suggested_key.mac) {
+      command.suggested_key.mac = command.suggested_key.mac.replace(/Alt\+/g, 'Command+');
+
+      if (commandKey === 'quick-switch' && command.suggested_key.mac === 'Command+Q') {
+        command.suggested_key.mac = 'Command+Shift+K';
+      }
+    }
+  });
+  console.log('Safari: Replaced Alt with Command in mac keybindings');
+}
+
 fs.writeFileSync(distPath, JSON.stringify(finalManifest, null, 2));
 console.log(`Manifest written to ${distPath}`);

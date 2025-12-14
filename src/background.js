@@ -59,7 +59,6 @@ browser.tabs.onRemoved.addListener(
 );
 
 browser.commands.onCommand.addListener(async (command) => {
-  console.log("Fuzzy Tab Switcher: Command received", command);
   if (command !== CMD_QUICK_SWITCH) return;
 
   try {
@@ -67,10 +66,16 @@ browser.commands.onCommand.addListener(async (command) => {
     const allHistory = await getToggleHistory();
     const history = allHistory[window.id];
 
-    if (history?.previous) {
+    if (!history?.previous) return;
+
+    try {
       await browser.tabs.update(history.previous, { active: true });
+    } catch (tabError) {
+      console.warn("Previous tab no longer exists, cleaning up history");
+      history.previous = null;
+      await setToggleHistory(allHistory);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Quick-switch error:", error);
   }
 });
