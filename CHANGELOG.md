@@ -1,3 +1,15 @@
+# v1.1.0 (2025-12-14)
+
+## ✨ Features
+
+- feat: add dynamic Safari shortcuts with Command key support
+
+## 🏗️ Chores
+
+- chore: centralize versioning from package.json as source of truth
+
+
+
 # v1.0.0 (2025-12-13)
 
 ## ✨ Features
