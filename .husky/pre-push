@@ -1,1 +1,1 @@
-npm run build:firefox && npm run lint:firefox
+npm run lint && npm run build:firefox && npm run lint:firefox

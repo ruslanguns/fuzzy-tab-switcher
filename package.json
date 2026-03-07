@@ -11,6 +11,8 @@
     "build:chrome": "TARGET=chrome vite build && node scripts/build-manifest.js chrome",
     "build:firefox": "TARGET=firefox vite build && node scripts/build-manifest.js firefox",
     "build:safari": "TARGET=safari vite build && node scripts/build-manifest.js safari",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "preview": "vite preview",
     "package:chrome": "npm run build:chrome && node scripts/package.js chrome",
     "package:firefox": "npm run build:firefox && node scripts/package.js firefox",
@@ -25,6 +27,7 @@
     "webextension-polyfill": "0.12.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.6",
     "@preact/preset-vite": "2.10.3",
     "@tailwindcss/vite": "4.2.1",
     "addons-linter": "9.9.1",

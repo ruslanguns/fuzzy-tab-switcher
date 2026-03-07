@@ -1,68 +1,74 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const TARGET = process.argv[2] || 'chrome';
-const PLATFORM_PREFIX = `__${TARGET}__`;
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const TARGET = process.argv[2] || 'chrome'
+const PLATFORM_PREFIX = `__${TARGET}__`
 
-console.log(`Building manifest for target: ${TARGET}`);
+console.log(`Building manifest for target: ${TARGET}`)
 
-const srcPath = path.resolve(__dirname, '../src/manifest.json');
-const distPath = path.resolve(__dirname, `../dist/${TARGET}/manifest.json`);
-const packagePath = path.resolve(__dirname, '../package.json');
+const srcPath = path.resolve(__dirname, '../src/manifest.json')
+const distPath = path.resolve(__dirname, `../dist/${TARGET}/manifest.json`)
+const packagePath = path.resolve(__dirname, '../package.json')
 
-fs.mkdirSync(path.dirname(distPath), { recursive: true });
+fs.mkdirSync(path.dirname(distPath), { recursive: true })
 
-const manifestSource = JSON.parse(fs.readFileSync(srcPath, 'utf-8'));
-const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+const manifestSource = JSON.parse(fs.readFileSync(srcPath, 'utf-8'))
+const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'))
 
 function processManifest(obj) {
   if (Array.isArray(obj)) {
-    return obj.map(item => processManifest(item));
+    return obj.map((item) => processManifest(item))
   }
 
   if (obj && typeof obj === 'object') {
-    const result = {};
-    const keys = Object.keys(obj);
+    const result = {}
+    const keys = Object.keys(obj)
 
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (!key.startsWith('__')) {
-        result[key] = processManifest(obj[key]);
+        result[key] = processManifest(obj[key])
       }
-    });
+    })
 
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (key.startsWith(PLATFORM_PREFIX)) {
-        const cleanKey = key.replace(PLATFORM_PREFIX, '');
-        result[cleanKey] = processManifest(obj[key]);
+        const cleanKey = key.replace(PLATFORM_PREFIX, '')
+        result[cleanKey] = processManifest(obj[key])
       }
-    });
+    })
 
-    return result;
+    return result
   }
 
-  return obj;
+  return obj
 }
 
-let finalManifest = processManifest(manifestSource);
+const finalManifest = processManifest(manifestSource)
 
-finalManifest.version = packageJson.version;
-console.log(`Using version ${packageJson.version} from package.json`);
+finalManifest.version = packageJson.version
+console.log(`Using version ${packageJson.version} from package.json`)
 
 if (TARGET === 'safari' && finalManifest.commands) {
-  Object.keys(finalManifest.commands).forEach(commandKey => {
-    const command = finalManifest.commands[commandKey];
-    if (command.suggested_key && command.suggested_key.mac) {
-      command.suggested_key.mac = command.suggested_key.mac.replace(/Alt\+/g, 'Command+');
+  Object.keys(finalManifest.commands).forEach((commandKey) => {
+    const command = finalManifest.commands[commandKey]
+    if (command.suggested_key?.mac) {
+      command.suggested_key.mac = command.suggested_key.mac.replace(
+        /Alt\+/g,
+        'Command+',
+      )
 
-      if (commandKey === 'quick-switch' && command.suggested_key.mac === 'Command+Q') {
-        command.suggested_key.mac = 'Command+Shift+K';
+      if (
+        commandKey === 'quick-switch' &&
+        command.suggested_key.mac === 'Command+Q'
+      ) {
+        command.suggested_key.mac = 'Command+Shift+K'
       }
     }
-  });
-  console.log('Safari: Replaced Alt with Command in mac keybindings');
+  })
+  console.log('Safari: Replaced Alt with Command in mac keybindings')
 }
 
-fs.writeFileSync(distPath, JSON.stringify(finalManifest, null, 2));
-console.log(`Manifest written to ${distPath}`);
+fs.writeFileSync(distPath, JSON.stringify(finalManifest, null, 2))
+console.log(`Manifest written to ${distPath}`)

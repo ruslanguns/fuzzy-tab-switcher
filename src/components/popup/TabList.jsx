@@ -1,28 +1,28 @@
-import { useEffect, useRef } from "preact/hooks";
-import { TabItem } from "./TabItem";
+import { useEffect, useRef } from 'preact/hooks'
+import { TabItem } from './TabItem'
 
 export function TabList({ results, selectedIndex, onSelect, onHover }) {
-  const selectedRef = useRef(null);
+  const selectedRef = useRef(null)
 
   useEffect(() => {
     if (selectedRef.current) {
       selectedRef.current.scrollIntoView({
-        block: "nearest",
-        behavior: "auto",
-      });
+        block: 'nearest',
+        behavior: 'auto',
+      })
     }
-  }, [selectedIndex]);
+  }, [selectedIndex])
 
   if (results.length === 0) {
     return (
-      <div class="flex items-center justify-center py-10 text-muted-foreground">
+      <div class='flex items-center justify-center py-10 text-muted-foreground'>
         No tabs found
       </div>
-    );
+    )
   }
 
   return (
-    <div class="max-h-[488px] overflow-y-auto">
+    <div class='max-h-[488px] overflow-y-auto'>
       {results.map((result, index) => (
         <TabItem
           key={result.tab.id}
@@ -34,5 +34,5 @@ export function TabList({ results, selectedIndex, onSelect, onHover }) {
         />
       ))}
     </div>
-  );
+  )
 }
