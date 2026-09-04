@@ -22,7 +22,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@preact/signals": "2.8.1",
+    "@preact/signals": "2.11.2",
     "preact": "10.28.4",
     "webextension-polyfill": "0.12.0"
   },
