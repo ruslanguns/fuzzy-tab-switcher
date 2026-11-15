@@ -1,113 +1,71 @@
+<div align="center">
+
+<img src="public/icons/128.png" width="96" alt="Fuzzy Tab Switcher logo" />
+
 # Fuzzy Tab Switcher
 
-A high-performance, **Open Source** tab switcher focused on speed and keyboard navigation. Replaces the default browser tab cycling with a fuzzy search interface that searches across all open windows.
+**Find any open tab in a few keystrokes.**<br />
+Press <kbd>Alt</kbd>+<kbd>K</kbd>, type a few letters, hit <kbd>Enter</kbd>. Works across every window.
 
-## Core Logic & Features
+[![Release](https://img.shields.io/github/v/release/ruslanguns/fuzzy-tab-switcher?style=flat-square)](https://github.com/ruslanguns/fuzzy-tab-switcher/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+![Chrome · Firefox · Safari](https://img.shields.io/badge/Chrome%20·%20Firefox%20·%20Safari-supported-success?style=flat-square)
 
-- **Intelligent Fuzzy Search**: Custom scoring algorithm that matches against both Title and URL (`Title` vs `URL` weighting). Prioritizes sequential matches and word boundaries.
-- **Cross-Window Context**: Queries `browser.tabs` globally, allowing seamless switching effectively treating the entire browser session as a single workspace.
-- **Smart Sorting**:
-  1. **Visual Order**: Defaults to natural matching browser tab order when query is empty.
-  2. **MRU**: Sorts by "Last Access Time" (Most Recently Used) when searching.
-- **Privacy**: Zero external requests. All history state is persisted in `browser.storage.local`.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/screenshot-dark.png" />
+  <img src="docs/images/screenshot-light.png" width="500" alt="Fuzzy Tab Switcher popup searching for “tabs”" />
+</picture>
 
-## Technical Stack
+</div>
 
-Built with a modern, compile-to-JS toolchain for performance and maintainability:
+## Features
 
-- **State Management**: Preact Signals for fine-grained reactivity.
-- **UI Framework**: Preact (lightweight React alternative).
-- **Styling**: Tailwind CSS (bundled via Vite).
-- **Build System**: Vite.
+- **Fuzzy search** over tab titles and URLs, with matched characters highlighted.
+- **All windows at once**: switching to a tab focuses its window.
+- **Smart ordering**: best match first, ties broken by most recently used.
+- **Quick switch** back to your previous tab with <kbd>Alt</kbd>+<kbd>Q</kbd>.
+- **Light, dark or system theme.**
+- **Private by design**: no network requests, only the `tabs` and `storage` permissions. See [PRIVACY.md](PRIVACY.md).
 
-## Development & Build
+## Shortcuts
 
-### Prerequisites
+| Shortcut                                    | Action                         |
+| :------------------------------------------ | :----------------------------- |
+| <kbd>Alt</kbd>+<kbd>K</kbd>                 | Open / close the switcher      |
+| <kbd>Alt</kbd>+<kbd>Q</kbd>                 | Switch to the previous tab     |
+| <kbd>↑</kbd> <kbd>↓</kbd> · <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> | Move the selection |
+| <kbd>Enter</kbd>                            | Go to the selected tab         |
+| <kbd>Esc</kbd>                              | Close                          |
 
-- Node.js (v18+ recommended)
-- npm or pnpm
+In Safari on macOS they are <kbd>⌘</kbd>+<kbd>K</kbd> and <kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd>. You can change them in your browser's extension shortcut settings.
 
-### Build Steps
+## Install
 
-1. Clone the repository:
+Download the zip for your browser from the [latest release](https://github.com/ruslanguns/fuzzy-tab-switcher/releases/latest), or [build it yourself](#development), then load it:
+
+- **Chrome / Brave / Edge**: `chrome://extensions` → enable *Developer mode* → *Load unpacked* → select `dist/chrome`.
+- **Firefox**: `about:debugging` → *This Firefox* → *Load Temporary Add-on…* → select `dist/firefox/manifest.json` (removed when Firefox restarts).
+- **Safari**: `xcrun safari-web-extension-converter dist/safari`, then build and run it in Xcode.
+
+## Development
+
+Requires Node.js 18+.
 
 ```bash
 git clone https://github.com/ruslanguns/fuzzy-tab-switcher.git
 cd fuzzy-tab-switcher
-```
-
-2. Install dependencies:
-
-```bash
 npm install
+npm run build:chrome   # or build:firefox / build:safari → dist/<browser>
 ```
 
-3. Build for your target browser (outputs to `dist/`):
+| Script                       | Purpose                                  |
+| :--------------------------- | :--------------------------------------- |
+| `npm run build:<browser>`    | Build into `dist/<browser>`              |
+| `npm run package:<browser>`  | Build and zip for distribution           |
+| `npm run lint` / `lint:fix`  | Lint and format with Biome               |
 
-- **Chrome / Brave / Edge**:
-
-```bash
-npm run build:chrome
-```
-
-- **Firefox**:
-
-  ```bash
-  npm run build:firefox
-  ```
-
-- **Safari**:
-
-  ```bash
-  npm run build:safari
-  ```
-
-## Installation (Developer Mode)
-
-> **Note**: These instructions are for loading the extension locally for development or testing.
-
-### Chromium Browsers (Chrome, Brave, Edge, Opera)
-
-1. Run `npm run build:chrome`.
-2. Navigate to `chrome://extensions`.
-3. Enable **Developer Mode** (toggle in top-right).
-4. Click **Load unpacked**.
-5. Select the `dist` directory.
-
-### Firefox
-
-> **Warning**: "Temporary Add-ons" are removed when you restart Firefox.
-
-1. Run `npm run build:firefox`.
-2. Navigate to `about:debugging`.
-3. Click **This Firefox** in the sidebar.
-4. Click **Load Temporary Add-on...**.
-5. Navigate to the `dist` folder and select the `manifest.json` file.
-
-### Safari (macOS)
-
-1. Run `npm run build:safari`.
-2. Convert the extension:
-
-   ```bash
-   xcrun safari-web-extension-converter dist
-   ```
-
-3. Follow the on-screen prompts to build and run via Xcode.
-
-## Usage
-
-| Shortcut                | Action                                |
-| :---------------------- | :------------------------------------ |
-| **Alt+K**               | **Open Tab Switcher**                 |
-| **Tab** / **Shift+Tab** | Navigate selection                    |
-| **Alt+Q**               | Switch to previous tab (Quick Switch) |
-| **Enter**               | Switch to tab                         |
+Built with [Preact](https://preactjs.com) + Signals, [Tailwind CSS](https://tailwindcss.com) and [Vite](https://vite.dev).
 
 ## License
 
-MIT
-
-## Author
-
-[Ruslan Gonzalez](https://x.com/ruslanguns)
+[MIT](LICENSE) © [Ruslan Gonzalez](https://x.com/ruslanguns)
