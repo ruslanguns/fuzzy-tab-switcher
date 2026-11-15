@@ -37,7 +37,7 @@ export const TabItem = forwardRef(
         type='button'
         onClick={onClick}
         onMouseEnter={onMouseEnter}
-        class={`flex cursor-pointer items-center gap-2 border-b border-border px-3 py-2 transition-colors last:border-b-0 ${isSelected ? 'bg-selection hover:bg-selection' : 'hover:bg-muted'} `}
+        class={`flex w-full cursor-pointer items-center gap-2 border-b border-border px-3 py-2 transition-colors text-left last:border-b-0 ${isSelected ? 'bg-selection hover:bg-selection' : 'hover:bg-muted'} `}
       >
         <img
           src={
